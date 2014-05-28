@@ -157,6 +157,10 @@ angular.module('adf')
             $rootScope.$broadcast('adfDashboardChanged', name, model);
           }
         };
+
+        $scope.$on('saveDashboard', function(event, data) {
+          $rootScope.$broadcast('adfDashboardChanged', name, model);
+        });
         
         // edit dashboard settings
         $scope.editDashboardDialog = function(){
