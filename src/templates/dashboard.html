@@ -3,13 +3,13 @@
   <h1>
     {{model.title}}
     <span style="font-size: 16px" class="pull-right">
-      <a href="" ng-if="editMode || hideEditMode" title="add new widget" ng-click="addWidgetDialog()">
+      <a href="" ng-if="editMode" title="add new widget" ng-click="addWidgetDialog()">
         <i class="fa fa-plus-circle"></i>
       </a>
-      <a href="" ng-if="editMode || hideEditMode" title="edit dashboard" ng-click="editDashboardDialog()">
+      <a href="" ng-if="editMode" title="edit dashboard" ng-click="editDashboardDialog()">
         <i class="fa fa-cog"></i>
       </a>
-      <span ng-show="!hideEditMode">
+      <span ng-show="!simplifiedEditMode">
         <a href="" title="{{editMode ? 'save changes' : 'enable edit mode'}}" ng-click="toggleEditMode()">
           <i class="fa" x-ng-class="{'fa-edit' : !editMode, 'fa-save' : editMode}"></i>
         </a>

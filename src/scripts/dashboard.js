@@ -104,7 +104,8 @@ angular.module('adf')
         collapsible: '@',
         adfModel: '=',
         adfWidgetFilter: '=',
-        hideEditMode: '='
+        editMode: '=',
+        simplifiedEditMode: '='
       },
       controller: function($scope){
         // sortable options for drag and drop
