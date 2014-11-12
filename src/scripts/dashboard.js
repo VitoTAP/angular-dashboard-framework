@@ -104,7 +104,7 @@ angular.module('adf')
         collapsible: '@',
         adfModel: '=',
         adfWidgetFilter: '=',
-        editMode: '@',
+        initialEditMode: '=',
         simplifiedEditMode: '='
       },
       controller: function($scope){
@@ -146,12 +146,6 @@ angular.module('adf')
           $log.error('could not find or create model');
         }
 
-        // edit mode
-        if(!$scope.editMode){
-          $scope.editMode = false;
-        }
-        $scope.editClass = "";
-
         $scope.toggleEditMode = function(){
           $scope.editMode = ! $scope.editMode;
     		  if ($scope.editMode){
@@ -162,6 +156,13 @@ angular.module('adf')
             $rootScope.$broadcast('adfDashboardChanged', name, model);
           }
         };
+
+        // edit mode
+        $scope.editMode = false;
+        if($scope.initialEditMode){
+          $scope.toggleEditMode();
+        }
+        $scope.editClass = "";
 
         $scope.$on('saveDashboard', function(event, data) {
           $rootScope.$broadcast('adfDashboardChanged', name, model);
