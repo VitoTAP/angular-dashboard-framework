@@ -104,7 +104,7 @@ angular.module('adf')
         collapsible: '@',
         adfModel: '=',
         adfWidgetFilter: '=',
-        editMode: '=',
+        editMode: '@',
         simplifiedEditMode: '='
       },
       controller: function($scope){
@@ -147,7 +147,9 @@ angular.module('adf')
         }
 
         // edit mode
-        $scope.editMode = false;
+        if(!$scope.editMode){
+          $scope.editMode = false;
+        }
         $scope.editClass = "";
 
         $scope.toggleEditMode = function(){
