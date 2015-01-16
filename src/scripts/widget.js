@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2013, Sebastian Sdorra
+ * Copyright (c) 2015, Sebastian Sdorra
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ angular.module('adf')
   .directive('adfWidget', function($log, $modal, dashboard, adfTemplatePath) {
 
     function stringToBoolean(string){
-      switch(string != null ? string.toLowerCase() : null){
+      switch(angular.isDefined(string) ? string.toLowerCase() : null){
         case "true": case "yes": case "1": return true;
         case "false": case "no": case "0": case null: return false;
         default: return Boolean(string);

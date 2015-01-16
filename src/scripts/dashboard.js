@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2013, Sebastian Sdorra
+ * Copyright (c) 2015, Sebastian Sdorra
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,13 +35,11 @@
  * dashboard can be used to store the model.
  */
 
-
-'use strict';
-
 angular.module('adf')
-  .directive('adfDashboard', function($rootScope, $log, $modal, dashboard, adfTemplatePath){
+  .directive('adfDashboard', function ($rootScope, $log, $modal, dashboard, adfTemplatePath) {
+    'use strict';
 
-    function copyWidgets(source, target){
+    function copyWidgets(source, target) {
       if ( source.widgets && source.widgets.length > 0 ){
         var w = source.widgets.shift();
         while (w){
@@ -51,35 +49,60 @@ angular.module('adf')
       }
     }
 
-    function fillStructure(model, columns, counter){
-      angular.forEach(model.rows, function(row){
-        angular.forEach(row.columns, function(column){
-          if (!column.widgets){
-            column.widgets = [];
-          }
-          if ( columns[counter] ){
-            copyWidgets(columns[counter], column);
-            counter++;
-          }
-        });
-      });
-      return counter;
+    function fillStructure(root, columns, counter) {
+        counter = counter || 0;
+
+        if (angular.isDefined(root.rows)) {
+            angular.forEach(root.rows, function (row) {
+                angular.forEach(row.columns, function (column) {
+                    // if the widgets prop doesn't exist, create a new array for it.
+                    // this allows ui.sortable to do it's thing without error
+                    if (!column.widgets) {
+                        column.widgets = [];
+                    }
+
+                    // if a column exist at the counter index, copy over the column
+                    if (angular.isDefined(columns[counter])) {
+                        copyWidgets(columns[counter], column);
+                        counter++;
+                    }
+
+                    // run fillStructure again for any sub rows/columns
+                    counter = fillStructure(column, columns, counter);
+                });
+            });
+        }
+
+        return counter;
     }
 
-    function readColumns(model){
-      var columns = [];
-      angular.forEach(model.rows, function(row){
-        angular.forEach(row.columns, function(col){
-          columns.push(col);
-        });
-      });
-      return columns;
+    /**
+    * Read Columns: recursively searches an object for the 'columns' property
+    * @param object model
+    * @param array  an array of existing columns; used when recursion happens
+    */
+    function readColumns(root, columns) {
+        columns = columns || [];
+
+        if (angular.isDefined(root.rows)) {
+            angular.forEach(root.rows, function (row) {
+                angular.forEach(row.columns, function (col) {
+                    columns.push(col);
+                    // keep reading columns until we can't any more
+                    readColumns(col, columns);
+                });
+            });
+        }
+
+        return columns;
     }
 
     function changeStructure(model, structure){
       var columns = readColumns(model);
-      model.rows = angular.copy(structure.rows);
       var counter = 0;
+
+      model.rows = angular.copy(structure.rows);
+
       while ( counter < columns.length ){
         counter = fillStructure(model, columns, counter);
       }
@@ -119,32 +142,43 @@ angular.module('adf')
           opacity: 0.4
         };
 
-        var name = $scope.name;
-        var model = $scope.adfModel;
-        var widgetFilter = $scope.adfWidgetFilter;
-        if ( ! model || ! model.rows ){
-          var structureName = $scope.structure;
-          var structure = dashboard.structures[structureName];
-          if (structure){
-            if (model){
-              model.rows = angular.copy(structure).rows;
-            } else {
-              model = angular.copy(structure);
-            }
-            model.structure = structureName;
-          } else {
-            $log.error( 'could not find structure ' + structureName);
-          }
-        }
 
-        if (model) {
-          if (!model.title){
-            model.title = 'Dashboard';
+        var model = {};
+        var structure = {};
+        var widgetFilter = {};
+        var structureName = {};
+        var name = $scope.name;
+
+        // Watching for changes on adfModel
+        $scope.$watch('adfModel', function(oldVal, newVal) {
+          if (newVal !== null) {
+            model = $scope.adfModel;
+            widgetFilter = $scope.adfWidgetFilter;
+            if ( ! model || ! model.rows ){
+              structureName = $scope.structure;
+              structure = dashboard.structures[structureName];
+              if (structure){
+                if (model){
+                  model.rows = angular.copy(structure).rows;
+                } else {
+                  model = angular.copy(structure);
+                }
+                model.structure = structureName;
+              } else {
+                $log.error( 'could not find structure ' + structureName);
+              }
+            }
+
+            if (model) {
+              if (!model.title){
+                model.title = 'Dashboard';
+              }
+              $scope.model = model;
+            } else {
+              $log.error('could not find or create model');
+            }
           }
-          $scope.model = model;
-        } else {
-          $log.error('could not find or create model');
-        }
+        }, true);
 
         $scope.toggleEditMode = function(){
           $scope.editMode = ! $scope.editMode;
