@@ -203,7 +203,8 @@ angular.module('adf')
         editable: '@',
         maximizable: '@',
         adfModel: '=',
-        adfWidgetFilter: '='
+        adfWidgetFilter: '=',
+        simplifiedEditMode: '@'
       },
       controller: function($scope){
         var model = {};
@@ -258,6 +259,10 @@ angular.module('adf')
             $rootScope.$broadcast('adfDashboardChanged', name, model);
           }
         };
+
+        if(stringToBoolean($scope.simplifiedEditMode) && stringToBoolean($scope.editable)) {
+            $scope.toggleEditMode();
+        }
 
         $scope.cancelEditMode = function(){
           $scope.editMode = false;
@@ -335,11 +340,15 @@ angular.module('adf')
         var options = {
           name: $attr.name,
           editable: true,
+          simplifiedEditMode: false,
           maximizable: stringToBoolean($attr.maximizable),
           collapsible: stringToBoolean($attr.collapsible)
         };
         if (angular.isDefined($attr.editable)){
           options.editable = stringToBoolean($attr.editable);
+        }
+        if (angular.isDefined($attr.simplifiedEditMode)){
+          options.simplifiedEditMode = stringToBoolean($attr.simplifiedEditMode);
         }
         $scope.options = options;
       },
