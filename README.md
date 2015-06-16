@@ -1,8 +1,10 @@
 # angular-dashboard-framework
 
-> Dashboard framework with Angular.js, Twitter Bootstrap and Font Awesome.
+> Dashboard framework with Angular.js and Twitter Bootstrap.
 
-The api of angular-dashboard-framework (adf) is documented [here](http://sdorra.github.io/angular-dashboard-framework/docs/).
+The api of angular-dashboard-framework (adf) is documented [here](http://sdorra.github.io/angular-dashboard-framework/docs/). A getting
+started guide can be found [here](https://github.com/sdorra/angular-dashboard-framework/wiki/Getting-started).
+Follow me ([@ssdorra](https://twitter.com/ssdorra)) on twitter for latest updates and news about adf.
 
 ## Demo
 
@@ -10,13 +12,13 @@ A live demo of the adf can be viewed [here](http://sdorra.github.io/angular-dash
 
 A more dynamic example can be found [here](https://github.com/sdorra/adf-dynamic-example).
 
-## Getting started
+## Build from source
 
 Install bower and grunt:
 
 ```bash
 npm install -g bower
-npm install -g grunt-cli
+npm install -g gulp
 ```
 
 Clone the repository:
@@ -33,10 +35,17 @@ npm install
 bower install
 ```
 
-You can start the sample dashboard, by using the server grunt task:
+Checkout git submodule widgets:
 
 ```bash
-grunt server
+git submodule init
+git submodule update
+```
+
+You can start the sample dashboard, by using the serve gulp task:
+
+```bash
+gulp serve
 ```
 
 Now you open the sample in your browser at http://localhost:9001/sample
@@ -44,8 +53,7 @@ Now you open the sample in your browser at http://localhost:9001/sample
 Or you can create a release build of angular-dashboard-framework and the samples:
 
 ```bash
-grunt
-grunt sample
+gulp all
 ```
 The sample and the final build of angular-dashboard-framework are now in the dist directory.
 

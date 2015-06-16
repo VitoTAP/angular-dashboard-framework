@@ -27,15 +27,7 @@
 angular.module('adf')
   .directive('adfWidget', function($log, $modal, dashboard, adfTemplatePath) {
 
-    function stringToBoolean(string){
-      switch(angular.isDefined(string) ? string.toLowerCase() : null){
-        case "true": case "yes": case "1": return true;
-        case "false": case "no": case "0": case null: return false;
-        default: return Boolean(string);
-      }
-    }
-
-    function preLink($scope, $element, $attr){
+    function preLink($scope){
       var definition = $scope.definition;
       if (definition) {
         var w = dashboard.widgets[definition.type];
@@ -45,10 +37,10 @@ angular.module('adf')
             definition.title = w.title;
           }
 
-          // pass edit mode
-          $attr.$observe('editMode', function(value){
-            $scope.editMode = stringToBoolean(value);
-          });
+          // set id for sortable
+          if (!definition.wid){
+            definition.wid = dashboard.id();
+          }
 
           // pass copy of widget to scope
           $scope.widget = angular.copy(w);
@@ -66,9 +58,6 @@ angular.module('adf')
           // pass config to scope
           $scope.config = config;
 
-          // convert collapsible to string
-          $scope.collapsible = stringToBoolean($scope.collapsible);
-
           // collapse
           $scope.isCollapsed = false;
         } else {
@@ -79,7 +68,7 @@ angular.module('adf')
       }
     }
 
-    function postLink($scope, $element, $attr) {
+    function postLink($scope, $element) {
       var definition = $scope.definition;
       if (definition) {
         // bind close function
@@ -105,7 +94,8 @@ angular.module('adf')
 
           var opts = {
             scope: editScope,
-            templateUrl: adfTemplatePath + 'widget-edit.html'
+            templateUrl: adfTemplatePath + 'widget-edit.html',
+            backdrop: 'static'
           };
 
           var instance = $modal.open(opts);
@@ -133,10 +123,31 @@ angular.module('adf')
       scope: {
         definition: '=',
         col: '=column',
-        editMode: '@',
-        collapsible: '='
+        editMode: '=',
+        options: '='
       },
-      compile: function compile($element, $attr, transclude) {
+
+      controller: function ($scope) {
+        $scope.openFullScreen = function() {
+          var definition = $scope.definition;
+          var fullScreenScope = $scope.$new();
+          var opts = {
+            scope: fullScreenScope,
+            templateUrl: adfTemplatePath + 'widget-fullscreen.html',
+            size: definition.modalSize || 'lg', // 'sm', 'lg'
+            backdrop: 'static',
+            windowClass: (definition.fullScreen) ? 'dashboard-modal widget-fullscreen' : 'dashboard-modal'
+          };
+
+          var instance = $modal.open(opts);
+          fullScreenScope.closeDialog = function () {
+            instance.close();
+            fullScreenScope.$destroy();
+          };
+        };
+      },
+
+      compile: function compile(){
 
         /**
          * use pre link, because link of widget-content

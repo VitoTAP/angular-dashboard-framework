@@ -25,7 +25,20 @@
 'use strict';
 
 angular.module('adf')
-  .directive('adfWidgetContent', function($log, $q, $sce, $http, $templateCache, $compile, $controller, $injector, dashboard) {
+  .directive('adfWidgetContent', function($log, $q, $sce, $http, $templateCache,
+    $compile, $controller, $injector, dashboard) {
+
+    function parseUrl(url){
+      var parsedUrl = url;
+      if ( url.indexOf('{widgetsPath}') >= 0 ){
+        parsedUrl = url.replace('{widgetsPath}', dashboard.widgetsPath)
+                       .replace('//', '/');
+        if (parsedUrl.indexOf('/') === 0){
+          parsedUrl = parsedUrl.substring(1);
+        }
+      }
+      return parsedUrl;
+    }
 
     function getTemplate(widget){
       var deferred = $q.defer();
@@ -33,20 +46,28 @@ angular.module('adf')
       if ( widget.template ){
         deferred.resolve(widget.template);
       } else if (widget.templateUrl) {
-        var url = $sce.getTrustedResourceUrl(widget.templateUrl);
-        $http.get(url, {cache: $templateCache})
-          .success(function(response){
-            deferred.resolve(response);
-          })
-          .error(function(){
-            deferred.reject('could not load template');
-          });
+        // try to fetch template from cache
+        var tpl = $templateCache.get(widget.templateUrl);
+        if (tpl){
+          deferred.resolve(tpl);
+        } else {
+          var url = $sce.getTrustedResourceUrl(parseUrl(widget.templateUrl));
+          $http.get(url)
+            .success(function(response){
+              // put response to cache, with unmodified url as key
+              $templateCache.put(widget.templateUrl, response);
+              deferred.resolve(response);
+            })
+            .error(function(){
+              deferred.reject('could not load template');
+            });
+        }
       }
 
       return deferred.promise;
     }
 
-    function compileWidget($scope, $element) {
+    function compileWidget($scope, $element, currentScope) {
       var model = $scope.model;
       var content = $scope.content;
 
@@ -107,6 +128,13 @@ angular.module('adf')
         $log.warn(msg);
         $element.html(dashboard.messageTemplate.replace(/{}/g, msg));
       });
+
+      // destroy old scope
+      if (currentScope){
+        currentScope.$destroy();
+      }
+
+      return templateScope;
     }
 
     return {
@@ -117,13 +145,13 @@ angular.module('adf')
         model: '=',
         content: '='
       },
-      link: function($scope, $element, $attr) {
-        compileWidget($scope, $element);
+      link: function($scope, $element) {
+        var currentScope = compileWidget($scope, $element, null);
         $scope.$on('widgetConfigChanged', function(){
-          compileWidget($scope, $element);
+          currentScope = compileWidget($scope, $element, currentScope);
         });
         $scope.$on('widgetReload', function(){
-          compileWidget($scope, $element);
+          currentScope = compileWidget($scope, $element, currentScope);
         });
       }
     };

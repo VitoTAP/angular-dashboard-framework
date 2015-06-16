@@ -35,6 +35,7 @@ angular.module('adf.provider', [])
   .provider('dashboard', function(){
 
     var widgets = {};
+    var widgetsPath = '';
     var structures = {};
     var messageTemplate = '<div class="alert alert-danger">{}</div>';
     var loadingTemplate = '\
@@ -103,6 +104,29 @@ angular.module('adf.provider', [])
       return this;
     };
 
+    /**
+     * @ngdoc method
+     * @name adf.dashboardProvider#widgetsPath
+     * @methodOf adf.dashboardProvider
+     * @description
+     *
+     * Sets the path to the directory which contains the widgets. The widgets
+     * path is used for widgets with a templateUrl which contains the
+     * placeholder {widgetsPath}. The placeholder is replaced with the
+     * configured value, before the template is loaded, but the template is
+     * cached with the unmodified templateUrl (e.g.: {widgetPath}/src/widgets).
+     * The default value of widgetPaths is ''.
+     *
+     *
+     * @param {string} path to the directory which contains the widgets
+     *
+     * @returns {Object} self
+     */
+    this.widgetsPath = function(path){
+      widgetsPath = path;
+      return this;
+    };
+
    /**
     * @ngdoc method
     * @name adf.dashboardProvider#structure
@@ -164,20 +188,42 @@ angular.module('adf.provider', [])
     };
 
    /**
-    * @ngdoc object
+    * @ngdoc service
     * @name adf.dashboard
     * @description
     *
-    * The dashboard holds all structures and widgets.
+    * The dashboard holds all options, structures and widgets.
+    *
+    * @property {Array.<Object>} widgets Array of registered widgets.
+    * @property {string} widgetsPath Default path for widgets.
+    * @property {Array.<Object>} structures Array of registered structures.
+    * @property {string} messageTemplate Template for messages.
+    * @property {string} loadingTemplate Template for widget loading.
     *
     * @returns {Object} self
     */
     this.$get = function(){
+      var cid = 0;
+
       return {
         widgets: widgets,
+        widgetsPath: widgetsPath,
         structures: structures,
         messageTemplate: messageTemplate,
-        loadingTemplate: loadingTemplate
+        loadingTemplate: loadingTemplate,
+
+        /**
+         * @ngdoc method
+         * @name adf.dashboard#id
+         * @methodOf adf.dashboard
+         * @description
+         *
+         * Creates an ongoing numeric id. The method is used to create ids for
+         * columns and widgets in the dashboard.
+         */
+        id: function(){
+          return ++cid;
+        }
       };
     };
 
