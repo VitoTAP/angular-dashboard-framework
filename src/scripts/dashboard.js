@@ -296,6 +296,11 @@ angular.module('adf')
           };
         };
 
+        // edit datasources rootscope broadcast
+        $scope.editDatasources = function(){
+            $rootScope.$broadcast('editDatasources');
+        };
+
         // add widget dialog
         $scope.addWidgetDialog = function(){
           var addScope = $scope.$new();
