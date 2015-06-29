@@ -301,6 +301,11 @@ angular.module('adf')
             $rootScope.$broadcast('editDatasources');
         };
 
+        // edit JSON model rootscope broadcast
+        $scope.editJSONModel = function(){
+            $rootScope.$broadcast('editJSONModel');
+        };
+
         // add widget dialog
         $scope.addWidgetDialog = function(){
           var addScope = $scope.$new();
