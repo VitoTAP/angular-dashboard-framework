@@ -1,27 +1,33 @@
 {
   "name": "angular-dashboard-framework",
-  "version": "0.10.0-SNAPSHOT",
+  "version": "0.11.0-SNAPSHOT",
+  "license": "MIT",
+  "authors": [
+    "Sebastian Sdorra"
+  ],
   "main": [
     "dist/angular-dashboard-framework.js",
     "dist/angular-dashboard-framework.css"
   ],
   "ignore": [
+    ".git",
     ".tmp",
     "dist/docs",
+    "dist/reports",
     "dist/sample",
-    "e2e",
     "node_modules",
     "sample",
     "src",
+    "test",
     ".bowerrc",
     ".editorconfig",
     ".gitignore",
     ".gitmodules",
     ".jshintrc",
+    ".travis.yml",
     "bower.json",
     "gulpfile.js",
-    "package.json",
-    "protractor.conf.js"
+    "package.json"
   ],
   "keywords": [
     "dashboard",
@@ -31,19 +37,19 @@
     "adf"
   ],
   "dependencies": {
-    "angular": "1.2.28",
-    "angular-bootstrap": "0.12.0",
-    "bootstrap": "3.3.4",
-    "Sortable": "1.1.1"
+    "angular": ">=1.2",
+    "angular-bootstrap": "^0.14.2",
+    "bootstrap": "3.3.5",
+    "Sortable": "1.2.1"
   },
   "devDependencies": {
-    "angular-mocks": "1.2.28",
-    "angular-scenario": "1.2.28",
-    "angular-route": "1.2.28",
-    "angular-local-storage": "0.1.5",
-    "es5-shim": "~2.0.8"
+    "angular-mocks": ">=1.2",
+    "angular-scenario": ">=1.2",
+    "angular-route": ">=1.2",
+    "angular-local-storage": ">=0.2",
+    "es5-shim": ">=4.1"
   },
   "resolutions": {
-    "angular": "1.2.28"
+    "angular": ">=1.2"
   }
 }

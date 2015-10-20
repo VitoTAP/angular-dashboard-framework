@@ -67,6 +67,7 @@ angular.module('adf.provider', [])
     *      if passed as a string.
     *   - `controllerAs` - `{string=}` - A controller alias name. If present the controller will be
     *      published to scope under the `controllerAs` name.
+    *   - `frameless` - `{boolean=}` - false if the widget should be shown in frameless mode. The default is false.
     *   - `template` - `{string=|function()=}` - html template as a string.
     *   - `templateUrl` - `{string=}` - path to an html template.
     *   - `reload` - `{boolean=}` - true if the widget could be reloaded. The default is false.
@@ -85,18 +86,23 @@ angular.module('adf.provider', [])
     *        resolved before its value is injected into the controller.
     *   - `edit` - `{object}` - Edit modus of the widget.
     *      - `controller` - `{string=|function()=}` - Same as above, but for the edit mode of the widget.
+    *      - `controllerAs` - `{string=}` - Same as above, but for the edit mode of the widget.
     *      - `template` - `{string=|function()=}` - Same as above, but for the edit mode of the widget.
     *      - `templateUrl` - `{string=}` - Same as above, but for the edit mode of the widget.
     *      - `resolve` - `{Object.<string, function>=}` - Same as above, but for the edit mode of the widget.
     *      - `reload` - {boolean} - true if the widget should be reloaded, after the edit mode is closed.
     *        Default is true.
+    *      - `immediate` - {boolean} - The widget enters the edit mode immediately after creation. Default is false.
     *
     * @returns {Object} self
     */
     this.widget = function(name, widget){
-      var w = angular.extend({reload: false}, widget);
+      var w = angular.extend({reload: false, frameless: false}, widget);
       if ( w.edit ){
-        var edit = {reload: true};
+        var edit = {
+          reload: true,
+          immediate: false
+        };
         angular.extend(edit, w.edit);
         w.edit = edit;
       }
@@ -178,7 +184,7 @@ angular.module('adf.provider', [])
     * Changes the template which is displayed as
     * long as the widget resources are not resolved.
     *
-    * @param {string} loading template
+    * @param {string} template loading template
     *
     * @returns {Object} self
     */
