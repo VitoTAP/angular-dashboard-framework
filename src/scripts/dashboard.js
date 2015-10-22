@@ -236,7 +236,8 @@ angular.module('adf')
         maximizable: '@',
         adfModel: '=',
         adfWidgetFilter: '=',
-        simplifiedEditMode: '@'
+        simplifiedEditMode: '@',
+        enableconfirmdelete: '@'
       },
       controller: function($scope){
         var model = {};
