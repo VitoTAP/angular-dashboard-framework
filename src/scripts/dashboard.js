@@ -231,7 +231,7 @@ angular.module('adf')
         name: '@',
         collapsible: '@',
         editable: '@',
-        editMode: '=',
+        editMode: '@',
         continuousEditMode: '=',
         maximizable: '@',
         adfModel: '=',
